@@ -19,14 +19,16 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 public class ElevatorSparkMax implements ElevatorIO {
 
-    private final SparkMax motor = new SparkMax(0,MotorType.kBrushless );
-    private final RelativeEncoder encoder = motor.getEncoder();
+    private final SparkMax motor;
+    private final RelativeEncoder encoder;
     private final DigitalInput limitSwitch = new DigitalInput(0);
     ProfiledPIDController pidController;
     private ElevatorFeedforward feedforward;
 
     public ElevatorSparkMax() {
 
+        motor = new SparkMax(0,MotorType.kBrushless );
+        encoder =  motor.getEncoder();
         feedforward = new ElevatorFeedforward(Ks, Kg, Kv, Ka);
         pidController = new ProfiledPIDController(Kp, Ki, Kd,
                 new TrapezoidProfile.Constraints(MAX_VELOCITY, MAX_ACCELERATION));
@@ -79,4 +81,5 @@ public class ElevatorSparkMax implements ElevatorIO {
     public void runPIDWithFF(double goal, double velocity) {
         motor.set(pidController.calculate(0,goal) + feedforward.calculate(velocity));
     }
+
 }

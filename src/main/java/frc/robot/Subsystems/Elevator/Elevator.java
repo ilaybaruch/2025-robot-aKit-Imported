@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Elevator extends SubsystemBase {
     private final ElevatorIO elevatorIO;
-    // private final ElevatorIOAutoLogged elevatorInputs = new ElevatorIOAutoLogged();
+    //private final ElevatorIOAutoLogged elevatorInputs = new ElevatorIOAutoLogged();
 
     public Elevator(ElevatorIO elevatorIO) {
         this.elevatorIO = elevatorIO;
