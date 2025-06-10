@@ -47,4 +47,36 @@ public class ElevatorSparkMax implements ElevatorIO {
         pidController.setTolerance(TOLERANCE);
 
     }
+
+    @Override
+    public void updateInputs(ElevatorIOInputs inputs) {
+        inputs.velocity = encoder.getVelocity();
+        inputs.voltage = (motor.getAppliedOutput() * motor.getBusVoltage());
+        inputs.limitSwitch = limitSwitch.get();
+    }
+
+    @Override
+    public void setSpeed(double precentage) {
+        motor.set(precentage);
+    }
+
+    @Override
+    public void setVoltage(double voltage) {
+        motor.setVoltage(voltage);
+    }
+
+    @Override
+    public void stopElevator() {
+        motor.stopMotor();
+    }
+
+    @Override
+    public void runPID(double goal) {
+        motor.set(pidController.calculate(0,goal));
+    }
+
+    @Override
+    public void runPIDWithFF(double goal, double velocity) {
+        motor.set(pidController.calculate(0,goal) + feedforward.calculate(velocity));
+    }
 }
