@@ -29,4 +29,7 @@ public interface ElevatorIO {
 
     public default void setPidValues(){}
 
+    public default void setFeedForward(double velocity){}
+
+
 }

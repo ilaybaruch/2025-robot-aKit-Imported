@@ -72,7 +72,8 @@ public class RobotContainer {
     operatorController.a().whileTrue(new ElevatorCommnads().runElevatorPID(elevator, 0));
     operatorController.x().whileTrue(new ElevatorCommnads().runElevatorPID(elevator, 20));
     operatorController.b().whileTrue(new ElevatorCommnads().runElevatorPIDFF(elevator, 0));
-    operatorController.y().whileTrue(new ElevatorCommnads().runElevator(elevator));
+    operatorController.PovUp().whileTrue(new ElevatorCommnads().runElevator(elevator));
+    operatorController.PovDown().whileTrue(new ElevatorCommnads().reverseElevator(elevator));
   }
 
   /**
