@@ -20,5 +20,7 @@ public class ElevatorConstants {
     public static final double TOLERANCE = 0;
     public static final double L2_POS = 0;
     public static final double L3_POS = 0;
+    public static final double UP_POS = 0;
+    public static final double UPPER_KG = 0;
 
 }

@@ -2,6 +2,7 @@
 package frc.robot.Subsystems.Elevator;
 
 import static frc.robot.Subsystems.Elevator.ElevatorConstants.*;
+import frc.robot.Subsystems.Elevator.ElevatorTuning;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -19,6 +20,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 public class ElevatorSparkMax implements ElevatorIO {
 
+    private final ElevatorTuning pidConstants;
     private final SparkMax motor;
     private final RelativeEncoder encoder;
     private final DigitalInput limitSwitch = new DigitalInput(0);
@@ -26,12 +28,13 @@ public class ElevatorSparkMax implements ElevatorIO {
     private ElevatorFeedforward feedforward;
 
     public ElevatorSparkMax() {
-
+        pidConstants = new ElevatorTuning();
         motor = new SparkMax(0,MotorType.kBrushless );
         encoder =  motor.getEncoder();
         feedforward = new ElevatorFeedforward(Ks, Kg, Kv, Ka);
         pidController = new ProfiledPIDController(Kp, Ki, Kd,
                 new TrapezoidProfile.Constraints(MAX_VELOCITY, MAX_ACCELERATION));
+                
                 
                 SparkBaseConfig config = new SparkMaxConfig();
                 
@@ -58,6 +61,15 @@ public class ElevatorSparkMax implements ElevatorIO {
     }
 
     @Override
+    public double getFeedForward(double velocity) {
+        double voltage = pidController.calculate(velocity);
+        if (encoder.getPosition() >= UP_POS) {
+            voltage += pidConstants.upperKg.get();
+        }
+        return voltage;
+    }
+
+    @Override
     public void setSpeed(double precentage) {
         motor.set(precentage);
     }
@@ -74,12 +86,12 @@ public class ElevatorSparkMax implements ElevatorIO {
 
     @Override
     public void runPID(double goal) {
-        motor.set(pidController.calculate(0,goal));
+        motor.set(pidController.calculate(encoder.getPosition(),goal));
     }
 
     @Override
-    public void runPIDWithFF(double goal, double velocity) {
-        motor.set(pidController.calculate(0,goal) + feedforward.calculate(velocity));
+    public void runPIDWithFF(double goal) {
+        motor.setVoltage(getFeedForward(pidController.getSetpoint().velocity)+pidController.calculate(encoder.getPosition(), goal));
     }
 
 }
