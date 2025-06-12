@@ -6,15 +6,15 @@ import frc.robot.Subsystems.Elevator.*;
 
 public class ElevatorCommnads extends Command {
     public Command runElevator(Elevator elevator){
-        return Commands.runEnd(()->elevator.getIO().setSpeed(0),()-> elevator.getIO().stopElevator(), elevator);
+        return Commands.runEnd(()->elevator.getIO().setVoltage(8),()-> elevator.getIO().stopElevator(), elevator);
     }
 
     public Command runElevatorPID(Elevator elevator, double goal){
         return Commands.runEnd(()->elevator.getIO().runPID(goal), ()->elevator.getIO().stopElevator(),elevator);
     }
 
-    public Command runElevatorPIDFF(Elevator elevator, double goal, double velocity){
-        return Commands.runEnd(()->elevator.getIO().runPIDWithFF(goal, velocity),()-> elevator.getIO().stopElevator(),elevator);
+    public Command runElevatorPIDFF(Elevator elevator, double goal){
+        return Commands.runEnd(()->elevator.getIO().runPIDWithFF(goal),()-> elevator.getIO().stopElevator(),elevator);
     }
 
     public Command stopElevator(Elevator elevator){

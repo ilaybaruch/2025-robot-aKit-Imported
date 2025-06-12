@@ -5,6 +5,7 @@ import org.littletonrobotics.junction.AutoLog;
 public interface ElevatorIO {
 
     @AutoLog
+    
     public static class ElevatorIOInputs {
         double voltage;
         double velocity;
@@ -25,5 +26,7 @@ public interface ElevatorIO {
     public default void runPIDWithFF(double goal){}
     
     public default double getFeedForward(double velocity){return 0; }
+
+    public default void setPidValues(){}
 
 }

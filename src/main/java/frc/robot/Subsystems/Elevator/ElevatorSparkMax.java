@@ -23,13 +23,14 @@ public class ElevatorSparkMax implements ElevatorIO {
     private final ElevatorTuning pidConstants;
     private final SparkMax motor;
     private final RelativeEncoder encoder;
-    private final DigitalInput limitSwitch = new DigitalInput(0);
+    private final DigitalInput limitSwitch;
     ProfiledPIDController pidController;
     private ElevatorFeedforward feedforward;
 
     public ElevatorSparkMax() {
+        limitSwitch = new DigitalInput(1);
         pidConstants = new ElevatorTuning();
-        motor = new SparkMax(0,MotorType.kBrushless );
+        motor = new SparkMax(MOTOR_ID,MotorType.kBrushless );
         encoder =  motor.getEncoder();
         feedforward = new ElevatorFeedforward(Ks, Kg, Kv, Ka);
         pidController = new ProfiledPIDController(Kp, Ki, Kd,
@@ -42,10 +43,10 @@ public class ElevatorSparkMax implements ElevatorIO {
                 .smartCurrentLimit(CURRENT_LIMIT)
                 .voltageCompensation(VOLTAGE_COMPENSATION);
 
-        config.encoder.positionConversionFactor(POSITION_CONVERSION_FACTOR)
-                .velocityConversionFactor(POSITION_CONVERSION_FACTOR / 60.0);
+        config.encoder.positionConversionFactor(1.0)
+                .velocityConversionFactor(1.0 / 60.0);
                 
-                motor.configure(config,ResetMode.kNoResetSafeParameters,PersistMode.kNoPersistParameters);
+                motor.configure(config,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters);
 
         encoder.setPosition(0);
 
@@ -94,4 +95,13 @@ public class ElevatorSparkMax implements ElevatorIO {
         motor.setVoltage(getFeedForward(pidController.getSetpoint().velocity)+pidController.calculate(encoder.getPosition(), goal));
     }
 
+    @Override
+    public void setPidValues(){
+        pidController.setP(pidConstants.getKp());
+        pidController.setI(pidConstants.getKi());
+        pidController.setD(pidConstants.getKd());
+        pidController.setConstraints(new TrapezoidProfile.Constraints(pidConstants.getMaxVelocity(), pidConstants.getMaxAcceleration()));
+        feedforward = new ElevatorFeedforward(pidConstants.getKs(), pidConstants.getKg(), pidConstants.getKv());
+
+    }
 }
