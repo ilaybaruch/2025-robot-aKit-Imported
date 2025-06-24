@@ -22,5 +22,13 @@ public class ElevatorConstants {
     public static final double L3_POS = 0;
     public static final double UP_POS = 0;
     public static final double UPPER_KG = 0;
+    public static final double GEARING = 0;
+    public static final double ELEVATOR_MIN_HEIGHT = 0;
+    public static final double ELEVATOR_MAX_HEIGHT = 0;
+    public static final double ELEVATOR_START_HEIGHT = 0;
+    public static final double DRUM_RAD = 0;
+    public static final double ELEVATOR_MASS = 0;
+    public static final double METER_TO_POS = 0;
 
+    
 }

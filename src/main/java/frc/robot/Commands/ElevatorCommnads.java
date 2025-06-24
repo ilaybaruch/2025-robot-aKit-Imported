@@ -5,8 +5,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Subsystems.Elevator.*;
 
 public class ElevatorCommnads extends Command {
+    
     public Command runElevator(Elevator elevator){
-        return Commands.runEnd(()->elevator.getIO().setSpeed(0.15),()-> elevator.getIO().stopElevator(), elevator);
+        return Commands.runEnd(()-> elevator.getIO().setSpeed(0.15),()-> elevator.getIO().stopElevator(), elevator);
     }
 
     public Command reverseElevator(Elevator elevator){
