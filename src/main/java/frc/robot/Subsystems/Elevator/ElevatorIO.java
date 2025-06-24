@@ -2,6 +2,8 @@ package frc.robot.Subsystems.Elevator;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import edu.wpi.first.math.geometry.Pose3d;
+
 public interface ElevatorIO {
 
     @AutoLog
@@ -10,6 +12,9 @@ public interface ElevatorIO {
         double voltage;
         double velocity;
         boolean limitSwitch;
+        double Position;
+        double output;
+        Pose3d pose;
 
     }
 

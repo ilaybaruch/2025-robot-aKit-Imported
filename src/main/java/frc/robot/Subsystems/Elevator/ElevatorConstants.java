@@ -29,6 +29,7 @@ public class ElevatorConstants {
     public static final double DRUM_RAD = 0;
     public static final double ELEVATOR_MASS = 0;
     public static final double METER_TO_POS = 0;
+    public static final double UPDATE_SEC = 0;
 
     
 }
