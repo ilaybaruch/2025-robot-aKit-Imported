@@ -46,7 +46,7 @@ public class ElevatorSimBuiltIn implements ElevatorIO {
 
     @Override
     public void stopElevator() {
-        elevator.setInput(0);
+        elevator.setInputVoltage(0);
     }
 
     @Override
