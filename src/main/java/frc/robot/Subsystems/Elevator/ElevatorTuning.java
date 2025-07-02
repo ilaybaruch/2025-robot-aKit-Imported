@@ -32,6 +32,10 @@ public double getKv(){
     return kvTune.get();
 }
 
+public double getKa(){
+    return kaTune.get();
+}
+
 public double getKg(){
     return kgTune.get();
 }

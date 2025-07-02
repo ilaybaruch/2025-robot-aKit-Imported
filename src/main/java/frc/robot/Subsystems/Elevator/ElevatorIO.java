@@ -28,7 +28,7 @@ public interface ElevatorIO {
 
     public default void runPID(double goal){}
     
-    public default void runPIDWithFF(double goal){}
+    public default void runPIDWithFF(double goal, double velocity){}
     
     public default double getFeedForward(double velocity){return 0; }
 

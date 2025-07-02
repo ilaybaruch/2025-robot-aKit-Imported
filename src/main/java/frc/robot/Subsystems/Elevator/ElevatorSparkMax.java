@@ -39,7 +39,7 @@ public class ElevatorSparkMax implements ElevatorIO {
                 
                 SparkBaseConfig config = new SparkMaxConfig();
                 
-                config.idleMode(IdleMode.kBrake).inverted(INVERTED)
+                config.idleMode(IdleMode.kCoast).inverted(INVERTED)
                 .smartCurrentLimit(CURRENT_LIMIT)
                 .voltageCompensation(VOLTAGE_COMPENSATION);
 
@@ -51,6 +51,7 @@ public class ElevatorSparkMax implements ElevatorIO {
         encoder.setPosition(0);
 
         pidController.setTolerance(TOLERANCE);
+        setPidValues();
 
     }
 
@@ -59,11 +60,12 @@ public class ElevatorSparkMax implements ElevatorIO {
         inputs.velocity = encoder.getVelocity();
         inputs.voltage = (motor.getAppliedOutput() * motor.getBusVoltage());
         inputs.limitSwitch = limitSwitch.get();
+        inputs.Position = encoder.getPosition();
     }
 
     @Override
     public double getFeedForward(double velocity) {
-        double voltage = pidController.calculate(velocity);
+        double voltage = feedforward.calculate(velocity);
         if (encoder.getPosition() >= UP_POS) {
             voltage += pidConstants.upperKg.get();
         }
@@ -96,8 +98,8 @@ public class ElevatorSparkMax implements ElevatorIO {
     }
 
     @Override
-    public void runPIDWithFF(double goal) {
-        motor.setVoltage(getFeedForward(0));
+    public void runPIDWithFF(double goal, double velocity) {
+        motor.setVoltage(getFeedForward(velocity) + pidController.calculate(encoder.getPosition(), goal));
     }
 
     @Override
@@ -106,7 +108,7 @@ public class ElevatorSparkMax implements ElevatorIO {
         pidController.setI(pidConstants.getKi());
         pidController.setD(pidConstants.getKd());
         pidController.setConstraints(new TrapezoidProfile.Constraints(pidConstants.getMaxVelocity(), pidConstants.getMaxAcceleration()));
-        feedforward = new ElevatorFeedforward(pidConstants.getKs(), pidConstants.getKg(), pidConstants.getKv());
+        feedforward = new ElevatorFeedforward(pidConstants.getKs(), pidConstants.getKg(), pidConstants.getKv(),pidConstants.getKa());
 
     }
 }

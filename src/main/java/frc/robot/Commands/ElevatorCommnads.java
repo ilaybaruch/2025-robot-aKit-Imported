@@ -19,8 +19,12 @@ public class ElevatorCommnads extends Command {
         return Commands.runEnd(()->elevator.getIO().runPID(goal), ()->elevator.getIO().stopElevator(),elevator);
     }
 
-    public Command runElevatorPIDFF(Elevator elevator, double goal){
-        return Commands.runEnd(()->elevator.getIO().setFeedForward(goal),()-> elevator.getIO().stopElevator(),elevator);
+    public Command runElevatorPIDFF(Elevator elevator,double goal, double velocity){
+        return Commands.runEnd(()->elevator.getIO().runPIDWithFF(velocity,goal),()-> elevator.getIO().stopElevator(),elevator);
+    }
+
+    public Command runFF(Elevator elevator, double velocity){
+        return Commands.runEnd(()->elevator.getIO().setFeedForward(velocity),()->elevator.getIO().stopElevator(),elevator);
     }
 
     public Command stopElevator(Elevator elevator){
