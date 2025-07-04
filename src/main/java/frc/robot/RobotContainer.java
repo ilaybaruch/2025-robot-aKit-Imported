@@ -41,13 +41,10 @@ import frc.robot.Subsystems.Elevator.ElevatorSparkMax;
  */
 public class RobotContainer {
 
-
   private static RobotContainer m_robotContainer = new RobotContainer();
   private final PomXboxController operatorController = new PomXboxController(1);
   Elevator elevator;
   ElevatorCommnads elevatorCommnads;
-
-
 
   // A chooser for autonomous commands
   SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -56,17 +53,18 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   private RobotContainer() {
-        switch (Constants.currentMode) {
-          case REAL:
-              elevator = new Elevator(new ElevatorSparkMax());
-            
-              break;
-        
-          case SIM:
-              //elevator = new Elevator(new ElevatorIOSim());
-              break;
-        }
+    switch (Constants.currentMode) {
+      case REAL:
+        elevator = new Elevator(new ElevatorSparkMax());
 
+        break;
+
+      case SIM:
+        // elevator = new Elevator(new ElevatorIOSim());
+        break;
+    }
+
+    elevatorCommnads = new ElevatorCommnads(elevator);
     configureButtonBindings();
 
     SmartDashboard.putData("Auto Mode", m_chooser);
@@ -85,12 +83,12 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    operatorController.a().whileTrue(new ElevatorCommnads().runElevatorPID(elevator, 0));
-    operatorController.x().whileTrue(new ElevatorCommnads().runElevatorPID(elevator, 20));
-    operatorController.b().whileTrue(new ElevatorCommnads().runElevatorPIDFF(elevator, 40,10));
-    operatorController.a().whileTrue(new ElevatorCommnads().runFF(elevator, 10));
-    operatorController.PovUp().whileTrue(new ElevatorCommnads().runElevator(elevator));
-    operatorController.PovDown().whileTrue(new ElevatorCommnads().reverseElevator(elevator));
+    operatorController.x().whileTrue(elevatorCommnads.runElevatorPIDFF(20, 0));
+    operatorController.b().whileTrue(elevatorCommnads.runElevatorPIDFF(40, 0));
+    operatorController.a().whileTrue(elevatorCommnads.runFF(10));
+    // operatorController.a().whileFalse(elevatorCommnads.runFF(0));
+    operatorController.PovUp().whileTrue(elevatorCommnads.runElevator());
+    operatorController.PovDown().whileTrue(elevatorCommnads.reverseElevator());
   }
 
   /**

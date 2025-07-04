@@ -23,6 +23,7 @@ public class Elevator extends SubsystemBase {
         elevatorIO.updateInputs(elevatorInputs);
         Logger.processInputs("elevator", elevatorInputs);
         elevatorIO.setPidValues();
+        getIO().resetEncouder();
     }
 
 }

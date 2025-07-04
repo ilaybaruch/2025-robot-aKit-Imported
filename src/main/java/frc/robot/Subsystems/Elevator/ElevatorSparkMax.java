@@ -2,6 +2,9 @@
 package frc.robot.Subsystems.Elevator;
 
 import static frc.robot.Subsystems.Elevator.ElevatorConstants.*;
+
+import org.littletonrobotics.junction.Logger;
+
 import frc.robot.Subsystems.Elevator.ElevatorTuning;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -30,23 +33,22 @@ public class ElevatorSparkMax implements ElevatorIO {
     public ElevatorSparkMax() {
         limitSwitch = new DigitalInput(1);
         pidConstants = new ElevatorTuning();
-        motor = new SparkMax(MOTOR_ID,MotorType.kBrushless );
-        encoder =  motor.getEncoder();
+        motor = new SparkMax(MOTOR_ID, MotorType.kBrushless);
+        encoder = motor.getEncoder();
         feedforward = new ElevatorFeedforward(Ks, Kg, Kv, Ka);
         pidController = new ProfiledPIDController(Kp, Ki, Kd,
                 new TrapezoidProfile.Constraints(MAX_VELOCITY, MAX_ACCELERATION));
-                
-                
-                SparkBaseConfig config = new SparkMaxConfig();
-                
-                config.idleMode(IdleMode.kCoast).inverted(INVERTED)
+
+        SparkBaseConfig config = new SparkMaxConfig();
+
+        config.idleMode(IdleMode.kCoast).inverted(INVERTED)
                 .smartCurrentLimit(CURRENT_LIMIT)
                 .voltageCompensation(VOLTAGE_COMPENSATION);
 
         config.encoder.positionConversionFactor(1.0)
                 .velocityConversionFactor(1.0 / 60.0);
-                
-                motor.configure(config,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters);
+
+        motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         encoder.setPosition(0);
 
@@ -94,7 +96,7 @@ public class ElevatorSparkMax implements ElevatorIO {
 
     @Override
     public void runPID(double goal) {
-        motor.set(pidController.calculate(encoder.getPosition(),goal));
+        motor.set(pidController.calculate(encoder.getPosition(), goal));
     }
 
     @Override
@@ -103,12 +105,45 @@ public class ElevatorSparkMax implements ElevatorIO {
     }
 
     @Override
-    public void setPidValues(){
+    public boolean ifPressed() {
+        return limitSwitch.get();
+    }
+
+    @Override
+    public void resetEncouder() {
+        if (ifPressed() == false) {
+            encoder.setPosition(0);
+        }
+    }
+
+    @Override
+    public double getPos() {
+        return encoder.getPosition();
+    }
+
+    @Override
+    public boolean atGoal() {
+        return pidController.atGoal();
+    }
+
+    @Override
+    public void runFF(double velocity) {
+        motor.setVoltage(getFeedForward(velocity));
+    }
+
+    @Override
+    public void setPidValues() {
         pidController.setP(pidConstants.getKp());
         pidController.setI(pidConstants.getKi());
         pidController.setD(pidConstants.getKd());
-        pidController.setConstraints(new TrapezoidProfile.Constraints(pidConstants.getMaxVelocity(), pidConstants.getMaxAcceleration()));
-        feedforward = new ElevatorFeedforward(pidConstants.getKs(), pidConstants.getKg(), pidConstants.getKv(),pidConstants.getKa());
+        pidController.setConstraints(
+                new TrapezoidProfile.Constraints(pidConstants.getMaxVelocity(), pidConstants.getMaxAcceleration()));
+        feedforward = new ElevatorFeedforward(pidConstants.getKs(), pidConstants.getKg(), pidConstants.getKv(),
+                pidConstants.getKa());
+
+        Logger.recordOutput("current kp", pidController.getP());
+        Logger.recordOutput("current kg", feedforward.getKg());
+        Logger.recordOutput("current ks", feedforward.getKs());
 
     }
 }
