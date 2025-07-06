@@ -100,6 +100,14 @@ public class ElevatorIOReal implements ElevatorIO {
     }
 
     @Override
+    public void resetEncouder() {
+        if (getLimitSwitch() == false) {
+            encoder.setPosition(0);
+
+        }
+    }
+
+    @Override
     public void setPIDvalues() {
         pidController.setP(pidConstants.getKp());
         pidController.setI(pidConstants.getKi());

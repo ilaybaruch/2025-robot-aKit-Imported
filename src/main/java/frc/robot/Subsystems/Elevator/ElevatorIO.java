@@ -49,4 +49,7 @@ public interface ElevatorIO {
     public default void setPIDvalues() {
     }
 
+    public default void resetEncouder() {
+    }
+
 }
