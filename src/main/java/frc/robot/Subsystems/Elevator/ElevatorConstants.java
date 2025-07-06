@@ -20,7 +20,7 @@ public class ElevatorConstants {
     public static final boolean INVERTED = true;
     public static final int CURRENT_LIMIT = 20;
     public static final double VOLTAGE_COMPENSATION = 12;
-    public static final double POSITION_CONVERSION_FACTOR = 0;
+    public static final double POSITION_CONVERSION_FACTOR = 1;
     public static final double MAX_ACCELERATION = 0;
     public static final double MAX_VELOCITY = 0;
     public static final double UPPER_KG = 0;

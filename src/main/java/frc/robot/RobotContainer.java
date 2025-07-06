@@ -50,7 +50,7 @@ public class RobotContainer {
    */
   private RobotContainer() {
     elevator = new Elevator(new ElevatorIOReal());
-
+    elevatorCommands = new ElevatorCommands(elevator);
     configureButtonBindings();
 
     SmartDashboard.putData("Auto Mode", m_chooser);
@@ -72,7 +72,7 @@ public class RobotContainer {
     operatorController.a().onTrue(elevatorCommands.runFF(0, 0));
     operatorController.b().onTrue(elevatorCommands.runPIDWithFF(0, 0));
     operatorController.PovDown().whileTrue(elevatorCommands.setSpeed(-0.05));
-    operatorController.PovUp().whileTrue(elevatorCommands.setSpeed(10));
+    operatorController.PovUp().whileTrue(elevatorCommands.setSpeed(0.2));
   }
 
   /**
