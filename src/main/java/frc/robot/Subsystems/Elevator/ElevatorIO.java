@@ -13,26 +13,40 @@ public interface ElevatorIO {
         public boolean limitSwitch;
     }
 
-    public default void updateInputs() {
+    public default void updateInputs(ElevatorIOInputs inputs) {
     }
 
-    public default void setSpeed() {
+    public default void setSpeed(double precentage) {
     }
 
-    public default void setVoltage() {
+    public default void setVoltage(double voltage) {
     }
 
-    public default void setPIDWithFF() {
+    public default void stopMotor() {
     }
 
-    public default void setFF() {
+    public default void setPIDWithFF(double goal, double velocity) {
     }
 
-    public default void setGoal() {
+    public default void setFF(double velocity, double goal) {
+    }
+
+    public default void setGoal(double goal) {
     }
 
     public default boolean atGoal() {
         return false;
+    }
+
+    public default boolean getLimitSwitch() {
+        return false;
+    }
+
+    public default double getPos() {
+        return 0;
+    }
+
+    public default void setPIDvalues() {
     }
 
 }
