@@ -15,6 +15,8 @@ public interface ElevatorIO {
         double Position;
         double output;
         Pose3d pose;
+        double pidCalc;
+        boolean atGoal;
 
     }
 

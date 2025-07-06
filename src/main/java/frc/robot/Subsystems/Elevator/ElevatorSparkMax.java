@@ -63,6 +63,7 @@ public class ElevatorSparkMax implements ElevatorIO {
         inputs.voltage = (motor.getAppliedOutput() * motor.getBusVoltage());
         inputs.limitSwitch = limitSwitch.get();
         inputs.Position = encoder.getPosition();
+        inputs.atGoal = pidController.atGoal();
     }
 
     @Override
@@ -101,6 +102,7 @@ public class ElevatorSparkMax implements ElevatorIO {
 
     @Override
     public void runPIDWithFF(double goal, double velocity) {
+        pidController.setGoal(goal);
         motor.setVoltage(getFeedForward(velocity) + pidController.calculate(encoder.getPosition(), goal));
     }
 
