@@ -69,10 +69,10 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    operatorController.a().onTrue(elevatorCommands.runFF(0, 0));
-    operatorController.b().onTrue(elevatorCommands.runPIDWithFF(0, 0));
+    operatorController.a().onTrue(elevatorCommands.runFF(10, 10));
+    operatorController.x().onTrue(elevatorCommands.runPIDWithFF(10, 10));
     operatorController.PovDown().whileTrue(elevatorCommands.setSpeed(-0.05));
-    operatorController.PovUp().whileTrue(elevatorCommands.setSpeed(0.15));
+    operatorController.PovUp().whileTrue(elevatorCommands.setSpeed(0.35));
   }
 
   /**

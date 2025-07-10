@@ -26,10 +26,12 @@ public class ElevatorIOReal implements ElevatorIO {
     RelativeEncoder encoder;
     POMDigitalInput limitSwitch;
     ElevatorTune pidConstants;
+    TrapezoidProfile.Constraints constraints;
 
     public ElevatorIOReal() {
         motor = new SparkMax(MOTOR_ID, MotorType.kBrushless);
-        pidController = new ProfiledPIDController(kP, kI, kD, null);
+        constraints = new TrapezoidProfile.Constraints(MAX_VELOCITY, MAX_ACCELERATION);
+        pidController = new ProfiledPIDController(kP, kI, kD, constraints);
         feedforward = new ElevatorFeedforward(kS, kG, kV, kA);
         limitSwitch = new POMDigitalInput(LIMIT_SWITCH_ID, IS_SWITCH_OPEN);
         encoder = motor.getEncoder();

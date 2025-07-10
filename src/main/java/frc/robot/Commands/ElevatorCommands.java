@@ -29,4 +29,8 @@ public class ElevatorCommands extends Command {
         return Commands.runEnd(() -> elevator.getIO().setSpeed(precentage), () -> elevator.getIO().stopMotor(),
                 elevator);
     }
+
+    public Command stopMotor() {
+        return Commands.run(() -> elevator.getIO().stopMotor(), elevator);
+    }
 }
