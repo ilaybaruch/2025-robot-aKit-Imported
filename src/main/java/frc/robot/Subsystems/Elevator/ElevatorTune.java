@@ -6,7 +6,7 @@ import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public class ElevatorTune {
 
-    LoggedNetworkNumber kpTune = new LoggedNetworkNumber("kP", kP);
+    LoggedNetworkNumber kpTune = new LoggedNetworkNumber("kp", kP);
     LoggedNetworkNumber kiTune = new LoggedNetworkNumber("ki", kI);
     LoggedNetworkNumber kdTune = new LoggedNetworkNumber("kd", kD);
     LoggedNetworkNumber kgTune = new LoggedNetworkNumber("kg", kG);

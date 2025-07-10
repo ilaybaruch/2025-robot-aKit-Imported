@@ -114,8 +114,7 @@ public class ElevatorIOReal implements ElevatorIO {
         pidController.setP(pidConstants.getKp());
         pidController.setI(pidConstants.getKi());
         pidController.setD(pidConstants.getKd());
-        pidController.setConstraints(
-                new TrapezoidProfile.Constraints(pidConstants.getMaxVelocity(), pidConstants.getMaxAcceleration()));
+        pidController.setConstraints(constraints);
         feedforward = new ElevatorFeedforward(pidConstants.getKs(), pidConstants.getKg(), pidConstants.getKv(),
                 pidConstants.getKa());
 
