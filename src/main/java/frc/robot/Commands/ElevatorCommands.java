@@ -20,7 +20,7 @@ public class ElevatorCommands extends Command {
                 elevator);
     }
 
-    public Command runFF(double velocity, double goal) {
+    public Command runFF(double goal, double velocity) {
         return Commands.runEnd(() -> elevator.getIO().setFF(velocity, goal), () -> elevator.getIO().stopMotor(),
                 elevator);
     }

@@ -72,7 +72,7 @@ public class RobotContainer {
     operatorController.a().onTrue(elevatorCommands.runFF(0, 0));
     operatorController.b().onTrue(elevatorCommands.runPIDWithFF(0, 0));
     operatorController.PovDown().whileTrue(elevatorCommands.setSpeed(-0.05));
-    operatorController.PovUp().whileTrue(elevatorCommands.setSpeed(0.2));
+    operatorController.PovUp().whileTrue(elevatorCommands.setSpeed(0.15));
   }
 
   /**
