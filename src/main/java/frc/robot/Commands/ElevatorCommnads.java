@@ -34,8 +34,9 @@ public class ElevatorCommnads extends Command {
 
     }
 
-    public Command runFF(double velocity) {
-        return Commands.runEnd(() -> elevator.getIO().setFeedForward(velocity), () -> elevator.getIO().stopElevator(),
+    public Command runFF(double goal, double velocity) {
+        return Commands.runEnd(() -> elevator.getIO().setFeedForward(goal, velocity),
+                () -> elevator.getIO().stopElevator(),
                 elevator);
     }
 

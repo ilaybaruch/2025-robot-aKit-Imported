@@ -45,7 +45,7 @@ public interface ElevatorIO {
     public default void setPidValues() {
     }
 
-    public default void setFeedForward(double velocity) {
+    public default void setFeedForward(double goal, double velocity) {
     }
 
     public default boolean ifPressed() {

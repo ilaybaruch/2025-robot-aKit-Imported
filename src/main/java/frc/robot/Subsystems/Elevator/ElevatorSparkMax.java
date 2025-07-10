@@ -91,7 +91,8 @@ public class ElevatorSparkMax implements ElevatorIO {
     }
 
     @Override
-    public void setFeedForward(double velocity) {
+    public void setFeedForward(double goal, double velocity) {
+        pidController.setGoal(goal);
         motor.setVoltage(getFeedForward(velocity));
     }
 
