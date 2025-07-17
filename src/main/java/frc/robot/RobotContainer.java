@@ -12,6 +12,9 @@
 
 package frc.robot;
 
+import static frc.robot.Subsystems.Elevator.ElevatorConstants.L2_POS;
+import static frc.robot.Subsystems.Elevator.ElevatorConstants.L3_POS;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -79,13 +82,14 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    operatorController.y().onTrue(elevatorCommnads.runElevatorPIDFF(52));
-    operatorController.x().onTrue(elevatorCommnads.runElevatorPIDFF(15));
-    operatorController.b().onTrue(elevatorCommnads.runElevatorPIDFF(0));
+    operatorController.y().onTrue(elevatorCommnads.runElevatorPIDFF(L3_POS));
+    operatorController.x().onTrue(elevatorCommnads.runElevatorPIDFF(L2_POS));
+    operatorController.b().onTrue(elevatorCommnads.elevatorDown());
     operatorController.a().onTrue(elevatorCommnads.runFF(10, 0));
     // operatorController.a().whileFalse(elevatorCommnads.runFF(0));
     operatorController.PovUp().whileTrue(elevatorCommnads.runElevator());
     operatorController.PovDown().whileTrue(elevatorCommnads.reverseElevator());
+    operatorController.PovRight().onTrue(elevatorCommnads.runElevatorPIDFF(15));
   }
 
   /**

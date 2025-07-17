@@ -147,6 +147,11 @@ public class ElevatorSparkMax implements ElevatorIO {
     }
 
     @Override
+    public void resetPID() {
+        pidController.reset(encoder.getPosition());
+    }
+
+    @Override
     public void setPidValues() {
         pidController.setP(pidConstants.getKp());
         pidController.setI(pidConstants.getKi());

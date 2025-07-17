@@ -30,11 +30,20 @@ public class ElevatorCommnads extends Command {
     }
 
     public Command runElevatorPIDFF(double goal) {
-        return new FunctionalCommand(() -> {
-        }, () -> elevator.getIO().runPIDWithFF(goal, 0),
+        return new FunctionalCommand(elevator.getIO()::resetPID, () -> elevator.getIO().runPIDWithFF(goal, 0),
                 interrupted -> elevator.getIO().runFF(0), () -> elevator.getIO().atGoal(),
                 elevator).withName("PID With FF");
 
+    }
+
+    public Command elevatorDown() {
+        return new FunctionalCommand(elevator.getIO()::resetPID, () -> elevator.getIO().runPIDWithFF(0, 0),
+                interrupted -> elevator.getIO().runFF(0), () -> elevator.getIO().atGoal(),
+                elevator)
+                .andThen(
+                        elevator.startEnd(() -> elevator.getIO().setSpeed(-0.05), () -> elevator.getIO().stopElevator())
+                                .until(() -> elevator.getIO().isPressed()))
+                .withName("elevator down");
     }
 
     public Command runFF(double goal, double velocity) {

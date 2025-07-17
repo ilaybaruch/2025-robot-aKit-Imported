@@ -18,8 +18,8 @@ public class ElevatorConstants {
     public static final double MAX_ACCELERATION = 80;
     public static final double MAX_VELOCITY = 50;
     public static final double TOLERANCE = 0.2;
-    public static final double L2_POS = 0;
-    public static final double L3_POS = 55.2;
+    public static final double L2_POS = 34;
+    public static final double L3_POS = 55;
     public static final double UP_POS = 0;
     public static final double UPPER_KG = 0;
     // simulation

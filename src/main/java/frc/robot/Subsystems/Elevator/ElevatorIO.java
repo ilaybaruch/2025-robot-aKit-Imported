@@ -56,6 +56,9 @@ public interface ElevatorIO {
     public default void resetEncouderIfNeeded() {
     }
 
+    public default void resetPID() {
+    }
+
     public default double getPos() {
         return 0;
     }
