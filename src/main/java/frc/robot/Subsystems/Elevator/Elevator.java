@@ -15,7 +15,7 @@ public class Elevator extends SubsystemBase {
         this.elevatorIO = elevatorIO;
     }
 
-    public ElevatorIO getIO(){
+    public ElevatorIO getIO() {
         return elevatorIO;
     }
 
@@ -23,7 +23,9 @@ public class Elevator extends SubsystemBase {
         elevatorIO.updateInputs(elevatorInputs);
         Logger.processInputs("elevator", elevatorInputs);
         elevatorIO.setPidValues();
-        getIO().resetEncouder();
+        getIO().resetEncouderIfNeeded();
+        SmartDashboard.putString("CurremtCommand",
+                getCurrentCommand() == null ? "None" : getCurrentCommand().getName());
     }
 
 }

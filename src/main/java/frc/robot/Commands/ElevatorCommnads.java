@@ -15,32 +15,35 @@ public class ElevatorCommnads extends Command {
     }
 
     public Command runElevator() {
-        return Commands.runEnd(() -> elevator.getIO().setSpeed(0.15), () -> elevator.getIO().stopElevator(), elevator);
+        return Commands.runEnd(() -> elevator.getIO().setSpeed(0.15), () -> elevator.getIO().stopElevator(), elevator)
+                .withName("move up manual");
     }
 
     public Command reverseElevator() {
-        return Commands.runEnd(() -> elevator.getIO().setSpeed(-0.05), () -> elevator.getIO().stopElevator(), elevator);
+        return Commands.runEnd(() -> elevator.getIO().setSpeed(-0.05), () -> elevator.getIO().stopElevator(), elevator)
+                .withName("move down manual");
     }
 
     public Command runElevatorPID(double goal) {
-        return Commands.runEnd(() -> elevator.getIO().runPID(goal), () -> elevator.getIO().setSpeed(0), elevator);
+        return Commands.runEnd(() -> elevator.getIO().runPID(goal), () -> elevator.getIO().stopElevator(), elevator)
+                .withName("PID");
     }
 
-    public Command runElevatorPIDFF(double goal, double velocity) {
+    public Command runElevatorPIDFF(double goal) {
         return new FunctionalCommand(() -> {
-        }, () -> elevator.getIO().runPIDWithFF(goal, velocity),
-                interrupted -> elevator.getIO().runFF(velocity), () -> elevator.getIO().getPos() == goal,
-                elevator);
+        }, () -> elevator.getIO().runPIDWithFF(goal, 0),
+                interrupted -> elevator.getIO().runFF(0), () -> elevator.getIO().atGoal(),
+                elevator).withName("PID With FF");
 
     }
 
     public Command runFF(double goal, double velocity) {
         return Commands.runEnd(() -> elevator.getIO().setFeedForward(goal, velocity),
                 () -> elevator.getIO().stopElevator(),
-                elevator);
+                elevator).withName("FF");
     }
 
     public Command stopElevator() {
-        return Commands.run(() -> elevator.getIO().stopElevator(), elevator);
+        return Commands.run(() -> elevator.getIO().stopElevator(), elevator).withName("stop");
     }
 }

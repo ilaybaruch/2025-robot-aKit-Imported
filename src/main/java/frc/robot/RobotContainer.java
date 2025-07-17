@@ -12,18 +12,14 @@
 
 package frc.robot;
 
-import org.littletonrobotics.junction.networktables.LoggedNetworkInput;
-
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Commands.ElevatorCommnads;
-import frc.robot.POM_lib.Joysticks.PomController;
 import frc.robot.POM_lib.Joysticks.PomXboxController;
 import frc.robot.Subsystems.Elevator.Elevator;
-import frc.robot.Subsystems.Elevator.ElevatorIO;
 //import frc.robot.Subsystems.Elevator.ElevatorIOSim;
 import frc.robot.Subsystems.Elevator.ElevatorSparkMax;
 
@@ -83,9 +79,9 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    operatorController.y().onTrue(elevatorCommnads.runElevatorPIDFF(52, 0));
-    operatorController.x().onTrue(elevatorCommnads.runElevatorPIDFF(15, 0));
-    operatorController.b().onTrue(elevatorCommnads.runElevatorPIDFF(0, 0));
+    operatorController.y().onTrue(elevatorCommnads.runElevatorPIDFF(52));
+    operatorController.x().onTrue(elevatorCommnads.runElevatorPIDFF(15));
+    operatorController.b().onTrue(elevatorCommnads.runElevatorPIDFF(0));
     operatorController.a().onTrue(elevatorCommnads.runFF(10, 0));
     // operatorController.a().whileFalse(elevatorCommnads.runFF(0));
     operatorController.PovUp().whileTrue(elevatorCommnads.runElevator());

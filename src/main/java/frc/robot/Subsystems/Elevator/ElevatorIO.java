@@ -17,6 +17,7 @@ public interface ElevatorIO {
         Pose3d pose;
         double pidCalc;
         boolean atGoal;
+        double currentOutput;
 
     }
 
@@ -48,11 +49,11 @@ public interface ElevatorIO {
     public default void setFeedForward(double goal, double velocity) {
     }
 
-    public default boolean ifPressed() {
+    public default boolean isPressed() {
         return false;
     }
 
-    public default void resetEncouder() {
+    public default void resetEncouderIfNeeded() {
     }
 
     public default double getPos() {

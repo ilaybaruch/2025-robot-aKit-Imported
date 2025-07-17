@@ -1,37 +1,49 @@
 
 package frc.robot.Subsystems.Elevator;
 
-import static frc.robot.Subsystems.Elevator.ElevatorConstants.*;
+import static frc.robot.Subsystems.Elevator.ElevatorConstants.CURRENT_LIMIT;
+import static frc.robot.Subsystems.Elevator.ElevatorConstants.INVERTED;
+import static frc.robot.Subsystems.Elevator.ElevatorConstants.Ka;
+import static frc.robot.Subsystems.Elevator.ElevatorConstants.Kd;
+import static frc.robot.Subsystems.Elevator.ElevatorConstants.Kg;
+import static frc.robot.Subsystems.Elevator.ElevatorConstants.Ki;
+import static frc.robot.Subsystems.Elevator.ElevatorConstants.Kp;
+import static frc.robot.Subsystems.Elevator.ElevatorConstants.Ks;
+import static frc.robot.Subsystems.Elevator.ElevatorConstants.Kv;
+import static frc.robot.Subsystems.Elevator.ElevatorConstants.MAX_ACCELERATION;
+import static frc.robot.Subsystems.Elevator.ElevatorConstants.MAX_VELOCITY;
+import static frc.robot.Subsystems.Elevator.ElevatorConstants.MOTOR_ID;
+import static frc.robot.Subsystems.Elevator.ElevatorConstants.TOLERANCE;
+import static frc.robot.Subsystems.Elevator.ElevatorConstants.UP_POS;
+import static frc.robot.Subsystems.Elevator.ElevatorConstants.VOLTAGE_COMPENSATION;
 
 import org.littletonrobotics.junction.Logger;
 
-import frc.robot.Subsystems.Elevator.ElevatorTuning;
-
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.config.SparkBaseConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.POM_lib.sensors.POMDigitalInput;
 
 public class ElevatorSparkMax implements ElevatorIO {
 
     private final ElevatorTuning pidConstants;
     private final SparkMax motor;
     private final RelativeEncoder encoder;
-    private final DigitalInput limitSwitch;
+    private final POMDigitalInput limitSwitch;
     ProfiledPIDController pidController;
     private ElevatorFeedforward feedforward;
 
     public ElevatorSparkMax() {
-        limitSwitch = new DigitalInput(1);
+        limitSwitch = new POMDigitalInput(1); // TODO constant
         pidConstants = new ElevatorTuning();
         motor = new SparkMax(MOTOR_ID, MotorType.kBrushless);
         encoder = motor.getEncoder();
@@ -64,6 +76,7 @@ public class ElevatorSparkMax implements ElevatorIO {
         inputs.limitSwitch = limitSwitch.get();
         inputs.Position = encoder.getPosition();
         inputs.atGoal = pidController.atGoal();
+        inputs.currentOutput = motor.getAppliedOutput();
     }
 
     @Override
@@ -92,7 +105,6 @@ public class ElevatorSparkMax implements ElevatorIO {
 
     @Override
     public void setFeedForward(double goal, double velocity) {
-        pidController.setGoal(goal);
         motor.setVoltage(getFeedForward(velocity));
     }
 
@@ -103,18 +115,18 @@ public class ElevatorSparkMax implements ElevatorIO {
 
     @Override
     public void runPIDWithFF(double goal, double velocity) {
-        pidController.setGoal(goal);
-        motor.setVoltage(getFeedForward(velocity) + pidController.calculate(encoder.getPosition(), goal));
+        motor.setVoltage(pidController.calculate(encoder.getPosition(), goal)
+                + getFeedForward(pidController.getSetpoint().velocity));
     }
 
     @Override
-    public boolean ifPressed() {
+    public boolean isPressed() {
         return limitSwitch.get();
     }
 
     @Override
-    public void resetEncouder() {
-        if (ifPressed() == false) {
+    public void resetEncouderIfNeeded() {
+        if (isPressed()) {
             encoder.setPosition(0);
         }
     }
