@@ -20,8 +20,12 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Commands.DriveCommands;
 import frc.robot.Commands.ElevatorCommnads;
 import frc.robot.POM_lib.Joysticks.PomXboxController;
+import frc.robot.Subsystems.Drive.Drive;
+import frc.robot.Subsystems.Drive.GyroIOPigeon;
+import frc.robot.Subsystems.Drive.ModuleIOReal;
 import frc.robot.Subsystems.Elevator.Elevator;
 //import frc.robot.Subsystems.Elevator.ElevatorIOSim;
 import frc.robot.Subsystems.Elevator.ElevatorSparkMax;
@@ -44,6 +48,8 @@ public class RobotContainer {
   private final PomXboxController operatorController = new PomXboxController(1);
   Elevator elevator;
   ElevatorCommnads elevatorCommnads;
+  Drive drive;
+  DriveCommands driveCommands;
 
   // A chooser for autonomous commands
   SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -55,6 +61,11 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         elevator = new Elevator(new ElevatorSparkMax());
+        drive = new Drive(new GyroIOPigeon(),
+            new ModuleIOReal(0),
+            new ModuleIOReal(1),
+            new ModuleIOReal(2),
+            new ModuleIOReal(3));
 
         break;
 
@@ -90,6 +101,7 @@ public class RobotContainer {
     operatorController.PovUp().whileTrue(elevatorCommnads.runElevator());
     operatorController.PovDown().whileTrue(elevatorCommnads.reverseElevator());
     operatorController.PovRight().onTrue(elevatorCommnads.runElevatorPIDFF(15));
+    drive.setDefaultCommand(driveCommands.swerveDrive());
   }
 
   /**

@@ -1,21 +1,7 @@
 
 package frc.robot.Subsystems.Elevator;
 
-import static frc.robot.Subsystems.Elevator.ElevatorConstants.CURRENT_LIMIT;
-import static frc.robot.Subsystems.Elevator.ElevatorConstants.INVERTED;
-import static frc.robot.Subsystems.Elevator.ElevatorConstants.Ka;
-import static frc.robot.Subsystems.Elevator.ElevatorConstants.Kd;
-import static frc.robot.Subsystems.Elevator.ElevatorConstants.Kg;
-import static frc.robot.Subsystems.Elevator.ElevatorConstants.Ki;
-import static frc.robot.Subsystems.Elevator.ElevatorConstants.Kp;
-import static frc.robot.Subsystems.Elevator.ElevatorConstants.Ks;
-import static frc.robot.Subsystems.Elevator.ElevatorConstants.Kv;
-import static frc.robot.Subsystems.Elevator.ElevatorConstants.MAX_ACCELERATION;
-import static frc.robot.Subsystems.Elevator.ElevatorConstants.MAX_VELOCITY;
-import static frc.robot.Subsystems.Elevator.ElevatorConstants.MOTOR_ID;
-import static frc.robot.Subsystems.Elevator.ElevatorConstants.TOLERANCE;
-import static frc.robot.Subsystems.Elevator.ElevatorConstants.UP_POS;
-import static frc.robot.Subsystems.Elevator.ElevatorConstants.VOLTAGE_COMPENSATION;
+import static frc.robot.Subsystems.Elevator.ElevatorConstants.*;
 
 import org.littletonrobotics.junction.Logger;
 
