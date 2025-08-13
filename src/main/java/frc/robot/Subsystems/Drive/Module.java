@@ -39,4 +39,22 @@ public class Module {
         return inputs.turnPosition;
     }
 
+    /**
+     * Runs the module with the specified output while controlling to zero degrees.
+     */
+    public void runCharacterization(double output) {
+        io.setDriveVoltage(output);
+        io.setTurnPosition(new Rotation2d());
+    }
+
+    /** Returns the module position in radians. */
+    public double getWheelRadiusCharacterizationPosition() {
+        return inputs.drivePositionRad;
+    }
+
+    /** Returns the module velocity in rad/sec. */
+    public double getFFCharacterizationVelocity() {
+        return inputs.driveVelocityRadPerSec;
+    }
+
 }

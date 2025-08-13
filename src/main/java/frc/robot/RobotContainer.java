@@ -20,8 +20,10 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Commands.DriveCommands;
 import frc.robot.Commands.ElevatorCommnads;
 import frc.robot.POM_lib.Joysticks.PomXboxController;
+import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Elevator.Elevator;
 //import frc.robot.Subsystems.Elevator.ElevatorIOSim;
 import frc.robot.Subsystems.Elevator.ElevatorSparkMax;
@@ -42,8 +44,11 @@ public class RobotContainer {
 
   private static RobotContainer m_robotContainer = new RobotContainer();
   private final PomXboxController operatorController = new PomXboxController(1);
+  private final PomXboxController driverController = new PomXboxController(1);
   Elevator elevator;
   ElevatorCommnads elevatorCommnads;
+  Drive drive;
+  DriveCommands driveCommands;
 
   // A chooser for autonomous commands
   SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -90,6 +95,9 @@ public class RobotContainer {
     operatorController.PovUp().whileTrue(elevatorCommnads.runElevator());
     operatorController.PovDown().whileTrue(elevatorCommnads.reverseElevator());
     operatorController.PovRight().onTrue(elevatorCommnads.runElevatorPIDFF(15));
+
+    drive.setDefaultCommand(driveCommands.joystickDrive(drive, () -> driverController.getLeftY(),
+        () -> driverController.getLeftX(), () -> driverController.getRightX()));
   }
 
   /**
