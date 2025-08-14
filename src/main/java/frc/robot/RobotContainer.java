@@ -24,6 +24,8 @@ import frc.robot.Commands.DriveCommands;
 import frc.robot.Commands.ElevatorCommnads;
 import frc.robot.POM_lib.Joysticks.PomXboxController;
 import frc.robot.Subsystems.Drive.Drive;
+import frc.robot.Subsystems.Drive.GyroIOPigeon;
+import frc.robot.Subsystems.Drive.ModuleIOReal;
 import frc.robot.Subsystems.Elevator.Elevator;
 //import frc.robot.Subsystems.Elevator.ElevatorIOSim;
 import frc.robot.Subsystems.Elevator.ElevatorSparkMax;
@@ -44,7 +46,7 @@ public class RobotContainer {
 
   private static RobotContainer m_robotContainer = new RobotContainer();
   private final PomXboxController operatorController = new PomXboxController(1);
-  private final PomXboxController driverController = new PomXboxController(1);
+  private final PomXboxController driverController = new PomXboxController(0);
   Elevator elevator;
   ElevatorCommnads elevatorCommnads;
   Drive drive;
@@ -60,6 +62,11 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         elevator = new Elevator(new ElevatorSparkMax());
+        drive = new Drive(new GyroIOPigeon(),
+            new ModuleIOReal(0),
+            new ModuleIOReal(1),
+            new ModuleIOReal(2),
+            new ModuleIOReal(3));
 
         break;
 
@@ -96,8 +103,8 @@ public class RobotContainer {
     operatorController.PovDown().whileTrue(elevatorCommnads.reverseElevator());
     operatorController.PovRight().onTrue(elevatorCommnads.runElevatorPIDFF(15));
 
-    drive.setDefaultCommand(driveCommands.joystickDrive(drive, () -> driverController.getLeftY() * 0.2,
-        () -> driverController.getLeftX() * 0.2, () -> driverController.getRightX() * 0.2));
+    drive.setDefaultCommand(driveCommands.joystickDrive(drive, () -> driverController.getLeftY() * 0.1,
+        () -> driverController.getLeftX() * 0.2, () -> driverController.getRightX() * 0.1));
   }
 
   /**

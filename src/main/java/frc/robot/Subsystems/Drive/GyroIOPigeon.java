@@ -1,6 +1,7 @@
 package frc.robot.Subsystems.Drive;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static frc.robot.Subsystems.Drive.DriveConstants.*;
 
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
@@ -14,7 +15,7 @@ public class GyroIOPigeon implements GyroIO {
     private Rotation2d offset;
 
     public GyroIOPigeon() {
-        pigeon = new WPI_PigeonIMU(5);
+        pigeon = new WPI_PigeonIMU(pigeonCanId);
         offset = new Rotation2d();
     }
 

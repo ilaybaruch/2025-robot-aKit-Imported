@@ -104,6 +104,11 @@ public class ModuleIOReal implements ModuleIO {
         }
 
         @Override
+        public void updateInputs(ModuleIOInputs inputs) {
+
+        }
+
+        @Override
         public void setDriveVelocity(double velocity) {
                 driveMotor.set(velocity);
         }
