@@ -14,13 +14,13 @@ public class GyroIOPigeon implements GyroIO {
     private Rotation2d offset;
 
     public GyroIOPigeon() {
-        pigeon = new WPI_PigeonIMU(0);
+        pigeon = new WPI_PigeonIMU(5);
         offset = new Rotation2d();
     }
 
     @Override
     public Rotation2d getGyroRotation() {
-        return pigeon.getRotation2d();
+        return pigeon.getRotation2d().minus(offset);
     }
 
     @Override

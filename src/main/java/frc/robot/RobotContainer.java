@@ -96,8 +96,8 @@ public class RobotContainer {
     operatorController.PovDown().whileTrue(elevatorCommnads.reverseElevator());
     operatorController.PovRight().onTrue(elevatorCommnads.runElevatorPIDFF(15));
 
-    drive.setDefaultCommand(driveCommands.joystickDrive(drive, () -> driverController.getLeftY(),
-        () -> driverController.getLeftX(), () -> driverController.getRightX()));
+    drive.setDefaultCommand(driveCommands.joystickDrive(drive, () -> driverController.getLeftY() * 0.2,
+        () -> driverController.getLeftX() * 0.2, () -> driverController.getRightX() * 0.2));
   }
 
   /**
