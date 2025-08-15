@@ -60,6 +60,10 @@ public class DriveCommands {
                                 .getTranslation();
         }
 
+        public static Command resetPigeon(Drive drive) {
+                return Commands.runOnce(() -> drive.resetGyro(), drive);
+        }
+
         /**
          * Field relative drive command using two joysticks (controlling linear and
          * angular velocities).

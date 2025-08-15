@@ -3,6 +3,7 @@ package frc.robot.Subsystems.Drive;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static frc.robot.Subsystems.Drive.DriveConstants.*;
 
+import com.ctre.phoenix.sensors.PigeonIMU.PigeonState;
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -37,5 +38,11 @@ public class GyroIOPigeon implements GyroIO {
     @Override
     public void reset(Rotation2d to) {
         offset = pigeon.getRotation2d().minus(to);
+    }
+
+    @Override
+    public void updateInputs(GyroIOInputs inputs) {
+        inputs.connected = pigeon.getState() != PigeonState.NoComm;
+        inputs.yawPosition = Rotation2d.fromDegrees(pigeon.getYaw()).minus(offset);
     }
 }

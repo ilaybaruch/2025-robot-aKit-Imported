@@ -1,6 +1,7 @@
 package frc.robot.Subsystems.Drive;
 
 import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -19,6 +20,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
@@ -105,6 +107,17 @@ public class ModuleIOReal implements ModuleIO {
 
         @Override
         public void updateInputs(ModuleIOInputs inputs) {
+                var driveStatus = BaseStatusSignal.refreshAll(
+                                driveMotor.getPosition(),
+                                driveMotor.getVelocity(),
+                                driveMotor.getMotorVoltage(),
+                                driveMotor.getStatorCurrent());
+                inputs.drivePositionRad = Units.rotationsToRadians(driveMotor.getPosition().getValueAsDouble());
+                inputs.driveVelocityRadPerSec = Units.rotationsToRadians(driveMotor.getVelocity().getValueAsDouble());
+                inputs.driveAppliedVolts = driveMotor.getMotorVoltage().getValueAsDouble();
+                inputs.driveCurrentAmps = driveMotor.getStatorCurrent().getValueAsDouble();
+
+                inputs.turnPosition = new Rotation2d(getAbsolutePosition());
 
         }
 

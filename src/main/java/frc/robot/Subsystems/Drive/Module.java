@@ -29,7 +29,7 @@ public class Module {
         state.optimize(getAngle());
         state.cosineScale(getAngle());
 
-        io.setDriveVelocity(state.speedMetersPerSecond / wheelRadiusMeters);
+        io.setDriveVoltage(state.speedMetersPerSecond / wheelRadiusMeters /* 12 */);
 
         io.setTurnPosition(state.angle);
 
