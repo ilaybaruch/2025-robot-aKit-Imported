@@ -38,7 +38,7 @@ public class DriveConstants {
         public static final Rotation2d frontRightZeroRotation = new Rotation2d(
                         0.39 + 3.063 + 2.586 + 2.003);// 0.39
         public static final Rotation2d backLeftZeroRotation = new Rotation2d(1.54 - 0.035 + Math.PI);
-        public static final Rotation2d backRightZeroRotation = new Rotation2d(3.05 - 0.05 + 1.015 + Math.PI + 0.218);
+        public static final Rotation2d backRightZeroRotation = new Rotation2d(3.05 - 0.05 + 1.015 + Math.PI + 0.218);//
 
         // Device CAN IDs
         public static final int pigeonCanId = 2;
@@ -99,7 +99,12 @@ public class DriveConstants {
                                         1),
                         moduleTranslations);
 
-        // turnPID
-        public static final double turnKs = 0.22;
+        // Turn PID configuration
+        public static final double turnKp = 0.23;
+        public static final double turnKd = 0.0;
+        public static final double turnKs = 0.0;
+        public static final double turnKff = 0;
+        public static final double turnPIDMinInput = 0; // Radians
+        public static final double turnPIDMaxInput = 2 * Math.PI; // Radians
 
 }

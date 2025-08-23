@@ -15,6 +15,7 @@ package frc.robot;
 import static frc.robot.Subsystems.Elevator.ElevatorConstants.L2_POS;
 import static frc.robot.Subsystems.Elevator.ElevatorConstants.L3_POS;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -68,6 +69,8 @@ public class RobotContainer {
             new ModuleIOReal(2),
             new ModuleIOReal(3));
 
+        drive.resetGyro();
+
         break;
 
       case SIM:
@@ -103,10 +106,16 @@ public class RobotContainer {
     operatorController.PovDown().whileTrue(elevatorCommnads.reverseElevator());
     operatorController.PovRight().onTrue(elevatorCommnads.runElevatorPIDFF(15));
 
-    drive.setDefaultCommand(driveCommands.joystickDrive(drive, () -> driverController.getLeftY() * 0.2,
-        () -> driverController.getLeftX() * 0.2, () -> driverController.getRightX() * 0.2));
+    drive.setDefaultCommand(DriveCommands.joystickDrive(drive, () -> driverController.getLeftY() * 0.2,
+        () -> driverController.getLeftX() * 0.2, () -> driverController.getRightX() *
+            0.2));
 
-    driverController.PovUp().onTrue(driveCommands.resetPigeon(drive));
+    driverController.PovUp().onTrue(DriveCommands.resetPigeon(drive));
+    driverController.PovDown().onTrue(DriveCommands.driveTune(drive));
+    driverController.a().whileTrue(DriveCommands.joystickDrive(drive, () -> 0, () -> 0.2, () -> 0));
+    driverController.b().whileTrue(DriveCommands.joystickDrive(drive, () -> 0.2, () -> 0, () -> 0));
+    driverController.x().whileTrue(DriveCommands.joystickDrive(drive, () -> 0, () -> 0, () -> 0));
+
   }
 
   /**

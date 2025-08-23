@@ -3,6 +3,7 @@ package frc.robot.Subsystems.Drive;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -10,10 +11,13 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.reduxrobotics.sensors.canandcolor.CanandcolorDetails.Enums.SlotOpcode;
+import com.revrobotics.servohub.ServoHub.ResetMode;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -26,6 +30,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import static frc.robot.Subsystems.Drive.DriveConstants.*;
 
+import org.littletonrobotics.junction.Logger;
+
 public class ModuleIOReal implements ModuleIO {
         private final int module;
 
@@ -36,6 +42,9 @@ public class ModuleIOReal implements ModuleIO {
         private final SparkClosedLoopController turnController;
 
         private final VelocityVoltage velocityVoltage;
+        private final SparkMaxConfig turnConfig;
+
+        private final DrivePIDTuning drivePIDTuning;
 
         public ModuleIOReal(int module) {
                 this.module = module;
@@ -50,11 +59,14 @@ public class ModuleIOReal implements ModuleIO {
 
                 driveMotor = new TalonFX(swerveBaseID + swerveModuleIDsCount * module);
                 turnMotor = new SparkMax(swerveBaseID + 1 + swerveModuleIDsCount * module, MotorType.kBrushless);
+                turnConfig = new SparkMaxConfig();
 
                 turnEncouder = new CANcoder(swerveBaseID + 2 + swerveModuleIDsCount * module);
                 turnController = turnMotor.getClosedLoopController();
 
                 velocityVoltage = new VelocityVoltage(0);
+
+                drivePIDTuning = new DrivePIDTuning();
 
                 // encouder config
                 var encoderConfig = new CANcoderConfiguration();
@@ -79,7 +91,7 @@ public class ModuleIOReal implements ModuleIO {
 
                 // turn motor config
                 var turnConfig = new SparkMaxConfig();
-                turnConfig
+                turnConfig.closedLoopRampRate(0.5)
                                 .inverted(turnInverted)
                                 .idleMode(IdleMode.kCoast)
                                 .smartCurrentLimit(turnMotorCurrentLimit)
@@ -93,8 +105,9 @@ public class ModuleIOReal implements ModuleIO {
                                 .uvwAverageDepth(2);
                 turnConfig.closedLoop
                                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                                .pidf(turnKp, 0, turnKd, turnKff, ClosedLoopSlot.kSlot1)
                                 .positionWrappingEnabled(true)
-                                .outputRange(-0.25, 0.25);
+                                .outputRange(-0.30, 0.30);
                 turnConfig.signals
                                 .primaryEncoderPositionAlwaysOn(true)
                                 .primaryEncoderPositionPeriodMs((int) (1000.0 / odometryFrequency))
@@ -103,6 +116,9 @@ public class ModuleIOReal implements ModuleIO {
                                 .appliedOutputPeriodMs(20)
                                 .busVoltagePeriodMs(20)
                                 .outputCurrentPeriodMs(20);
+
+                turnMotor.configure(turnConfig, com.revrobotics.spark.SparkBase.ResetMode.kResetSafeParameters,
+                                PersistMode.kPersistParameters);
         }
 
         @Override
@@ -118,6 +134,7 @@ public class ModuleIOReal implements ModuleIO {
                 inputs.driveCurrentAmps = driveMotor.getStatorCurrent().getValueAsDouble();
 
                 inputs.turnPosition = new Rotation2d(getAbsolutePosition());
+                inputs.turnCurrentAmps = getAbsolutePosition();
 
         }
 
@@ -138,6 +155,7 @@ public class ModuleIOReal implements ModuleIO {
 
         @Override
         public void setTurnPosition(Rotation2d setpoint) {
+                Logger.recordOutput("set point" + module, setpoint.getDegrees());
                 double error = setpoint.minus(Rotation2d.fromRadians(getAbsolutePosition())).getRadians();
                 if (Math.abs(error) >= Math.PI) {
                         error -= Math.copySign(Math.PI, error);
@@ -146,10 +164,11 @@ public class ModuleIOReal implements ModuleIO {
                 var ks = Math.copySign(turnKs, error);
                 if (Math.abs(error) > 0.03) {
                         turnController.setReference(setpoint.getRadians(), ControlType.kPosition,
-                                        ClosedLoopSlot.kSlot0, ks, ArbFFUnits.kVoltage);
+                                        ClosedLoopSlot.kSlot1, ks, ArbFFUnits.kVoltage);
                 } else {
                         setTurnVoltage(0);
                 }
+
         }
 
         @Override
@@ -161,6 +180,24 @@ public class ModuleIOReal implements ModuleIO {
         public void stop() {
                 driveMotor.stopMotor();
                 turnMotor.stopMotor();
+        }
+
+        // @Override
+        // public void setPID() {
+        // turnController.setReference(null, null);
+        // }
+
+        @Override
+        public void setPidValues() {
+                turnConfig.closedLoop.pidf(drivePIDTuning.getKp(), 0, drivePIDTuning.getKd(), drivePIDTuning.getKff(),
+                                ClosedLoopSlot.kSlot1);
+                turnMotor.configure(turnConfig, com.revrobotics.spark.SparkBase.ResetMode.kNoResetSafeParameters,
+                                PersistMode.kNoPersistParameters);
+        }
+
+        @Override
+        public void setMotorEncouderToCAN() {
+                turnMotor.getEncoder().setPosition(getAbsolutePosition());
         }
 
 }

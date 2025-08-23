@@ -9,6 +9,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Subsystems.Drive.DriveConstants.*;
@@ -69,7 +70,34 @@ public class Drive extends SubsystemBase {
     }
 
     public void resetGyro() {
-        gyroIO.reset();
+        // if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
+        // resetGyro(new Rotation2d());
+        // // setPose(new Pose2d(getPose().getTranslation(), new Rotation2d()));
+        // } else {
+        // resetGyro(new Rotation2d(Math.PI));
+        // // setPose(new Pose2d(getPose().getTranslation(), new Rotation2d(Math.PI)));
+        // }
+        resetGyro(new Rotation2d());
+    }
+
+    public void resetGyro(Rotation2d to) {
+        if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
+            to = to.minus(new Rotation2d(Math.PI));
+        }
+        gyroIO.reset(to);
+        // setPose(new Pose2d(getPose().getTranslation(), to));
+    }
+
+    public void setPidValues() {
+        for (int i = 0; i < 4; i++) {
+            modules[i].driveTune();
+        }
+    }
+
+    public void setAngle(Rotation2d angle) {
+        for (int i = 0; i < 4; i++) {
+            modules[i].setAngle(angle);
+        }
     }
 
     /** Returns the current odometry pose. */

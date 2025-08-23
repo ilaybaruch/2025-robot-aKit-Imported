@@ -48,4 +48,13 @@ public interface ModuleIO {
     public default void stop() {
     }
 
+    public default void setPID() {
+    }
+
+    public default void setPidValues() {
+    }
+
+    public default void setMotorEncouderToCAN() {
+    }
+
 }

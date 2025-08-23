@@ -2,15 +2,19 @@ package frc.robot.Subsystems.Drive;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.Timer;
 
 import static frc.robot.Subsystems.Drive.DriveConstants.*;
 
 import java.time.Period;
 
+import org.littletonrobotics.junction.Logger;
+
 public class Module {
     private final ModuleIO io;
     private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
     private final int index;
+    private final Timer timer = new Timer();
 
     public Module(ModuleIO io, int index) {
         this.io = io;
@@ -19,6 +23,11 @@ public class Module {
 
     public void periodic() {
         io.updateInputs(inputs);
+        Logger.processInputs("drive/module " + index, inputs);
+        // io.setPidValues();
+        if (timer.advanceIfElapsed(5)) {
+            io.setMotorEncouderToCAN();
+        }
     }
 
     public void stop() {
@@ -39,6 +48,10 @@ public class Module {
         return inputs.turnPosition;
     }
 
+    public void setAngle(Rotation2d angle) {
+        io.setTurnPosition(angle);
+    }
+
     /**
      * Runs the module with the specified output while controlling to zero degrees.
      */
@@ -55,6 +68,10 @@ public class Module {
     /** Returns the module velocity in rad/sec. */
     public double getFFCharacterizationVelocity() {
         return inputs.driveVelocityRadPerSec;
+    }
+
+    public void driveTune() {
+        io.setPidValues();
     }
 
 }

@@ -13,8 +13,9 @@ public class ElevatorTuning {
     LoggedNetworkNumber kaTune = new LoggedNetworkNumber("ka", Ka);
     LoggedNetworkNumber ksTune = new LoggedNetworkNumber("ks", Ks);
     LoggedNetworkNumber kvTune = new LoggedNetworkNumber("kv", Kv);
-    LoggedNetworkNumber maxAcceleration = new LoggedNetworkNumber("max acceleration", MAX_ACCELERATION);
-    LoggedNetworkNumber maxVelocity = new LoggedNetworkNumber("max velocity", MAX_VELOCITY);
+    LoggedNetworkNumber maxAcceleration = new LoggedNetworkNumber("maxacceleration", MAX_ACCELERATION);
+    LoggedNetworkNumber maxVelocity = new LoggedNetworkNumber("max velocity",
+            MAX_VELOCITY);
     LoggedNetworkNumber upperKg = new LoggedNetworkNumber("upper gk", UPPER_KG);
 
     public double getKp() {
