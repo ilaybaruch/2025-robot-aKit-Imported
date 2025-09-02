@@ -100,7 +100,7 @@ public class DriveConstants {
                         moduleTranslations);
 
         // Turn PID configuration
-        public static final double turnKp = 0.23;
+        public static final double turnKp = 0.23; // 0.23
         public static final double turnKd = 0.0;
         public static final double turnKs = 0.0;
         public static final double turnKff = 0;

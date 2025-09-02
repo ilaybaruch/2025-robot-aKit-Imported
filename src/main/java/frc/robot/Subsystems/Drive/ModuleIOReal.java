@@ -107,6 +107,7 @@ public class ModuleIOReal implements ModuleIO {
                                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                                 .pidf(turnKp, 0, turnKd, turnKff, ClosedLoopSlot.kSlot1)
                                 .positionWrappingEnabled(true)
+                                .positionWrappingInputRange(turnPIDMinInput, turnPIDMaxInput)
                                 .outputRange(-0.30, 0.30);
                 turnConfig.signals
                                 .primaryEncoderPositionAlwaysOn(true)
