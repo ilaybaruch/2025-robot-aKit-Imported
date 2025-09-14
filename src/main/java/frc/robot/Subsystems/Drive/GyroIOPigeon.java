@@ -3,6 +3,8 @@ package frc.robot.Subsystems.Drive;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static frc.robot.Subsystems.Drive.DriveConstants.*;
 
+import java.util.Queue;
+
 import com.ctre.phoenix.sensors.PigeonIMU.PigeonState;
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
@@ -14,10 +16,16 @@ public class GyroIOPigeon implements GyroIO {
 
     private final WPI_PigeonIMU pigeon;
     private Rotation2d offset;
+    // private final Queue<Double> yawPositionQueue;
+    // private final Queue<Double> yawTimestampQueue;
 
     public GyroIOPigeon() {
         pigeon = new WPI_PigeonIMU(pigeonCanId);
         offset = new Rotation2d();
+
+        // yawTimestampQueue = OdometryThread.getInstance().makeTimestampQueue();
+        // yawPositionQueue =
+        // OdometryThread.getInstance().registerSignal(pigeon::getYaw);
     }
 
     @Override
@@ -44,5 +52,14 @@ public class GyroIOPigeon implements GyroIO {
     public void updateInputs(GyroIOInputs inputs) {
         inputs.connected = pigeon.getState() != PigeonState.NoComm;
         inputs.yawPosition = Rotation2d.fromDegrees(pigeon.getYaw()).minus(offset);
+        inputs.yawVelocityRadPerSec = Units.degreesToRadians(pigeon.getRate());
+
+        // inputs.odometryYawTimestamps = yawTimestampQueue.stream().mapToDouble((Double
+        // value) -> value).toArray();
+        // inputs.odometryYawPositions = yawPositionQueue.stream()
+        // .map((Double value) -> Rotation2d.fromDegrees(value))
+        // .toArray(Rotation2d[]::new);
+        // yawTimestampQueue.clear();
+        // yawPositionQueue.clear();
     }
 }

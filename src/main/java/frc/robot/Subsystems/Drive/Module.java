@@ -1,6 +1,7 @@
 package frc.robot.Subsystems.Drive;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -16,6 +17,8 @@ public class Module {
     private final int index;
     private final Timer timer = new Timer();
 
+    private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[] {};
+
     public Module(ModuleIO io, int index) {
         this.io = io;
         this.index = index;
@@ -27,6 +30,15 @@ public class Module {
         // io.setPidValues();
         if (timer.advanceIfElapsed(5)) {
             io.setMotorEncouderToCAN();
+        }
+
+        // Calculate positions for odometry
+        int sampleCount = inputs.odometryTimestamps.length; // All signals are sampled together
+        odometryPositions = new SwerveModulePosition[sampleCount];
+        for (int i = 0; i < sampleCount; i++) {
+            double positionMeters = inputs.odometryDrivePositionsRad[i] * wheelRadiusMeters;
+            Rotation2d angle = inputs.odometryTurnPositions[i];
+            odometryPositions[i] = new SwerveModulePosition(positionMeters, angle);
         }
     }
 
@@ -52,12 +64,32 @@ public class Module {
         io.setTurnPosition(angle);
     }
 
+    /** Returns the current drive position of the module in meters. */
+    public double getPositionMeters() {
+        return inputs.drivePositionRad * wheelRadiusMeters;
+    }
+
+    /** Returns the module position (turn angle and drive position). */
+    public SwerveModulePosition getPosition() {
+        return new SwerveModulePosition(getPositionMeters(), getAngle());
+    }
+
     /**
      * Runs the module with the specified output while controlling to zero degrees.
      */
     public void runCharacterization(double output) {
         io.setDriveVoltage(output);
         io.setTurnPosition(new Rotation2d());
+    }
+
+    /** Returns the timestamps of the samples received this cycle. */
+    public double[] getOdometryTimestamps() {
+        return inputs.odometryTimestamps;
+    }
+
+    /** Returns the module positions received this cycle. */
+    public SwerveModulePosition[] getOdometryPositions() {
+        return odometryPositions;
     }
 
     /** Returns the module position in radians. */

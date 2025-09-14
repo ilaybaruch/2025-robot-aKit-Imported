@@ -25,10 +25,13 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import static frc.robot.Subsystems.Drive.DriveConstants.*;
+
+import java.util.Queue;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -38,6 +41,8 @@ public class ModuleIOReal implements ModuleIO {
         private final TalonFX driveMotor;
         private final SparkMax turnMotor;
 
+        private final Timer resetToAbsoluteTimer = new Timer();
+
         private final CANcoder turnEncouder;
         private final SparkClosedLoopController turnController;
 
@@ -45,6 +50,11 @@ public class ModuleIOReal implements ModuleIO {
         private final SparkMaxConfig turnConfig;
 
         private final DrivePIDTuning drivePIDTuning;
+
+        // Queue inputs from odometry thread
+        private final Queue<Double> timestampQueue;
+        private final Queue<Double> drivePositionQueue;
+        private final Queue<Double> turnPositionQueue;
 
         public ModuleIOReal(int module) {
                 this.module = module;
@@ -120,6 +130,14 @@ public class ModuleIOReal implements ModuleIO {
 
                 turnMotor.configure(turnConfig, com.revrobotics.spark.SparkBase.ResetMode.kResetSafeParameters,
                                 PersistMode.kPersistParameters);
+
+                // Create odometry queues
+                timestampQueue = OdometryThread.getInstance().makeTimestampQueue();
+                drivePositionQueue = OdometryThread.getInstance()
+                                .registerSignal(() -> Units
+                                                .rotationsToRadians(driveMotor.getPosition().getValueAsDouble()));
+                turnPositionQueue = OdometryThread.getInstance().registerSignal(turnMotor,
+                                turnMotor.getEncoder()::getPosition);
         }
 
         @Override
@@ -137,6 +155,29 @@ public class ModuleIOReal implements ModuleIO {
                 inputs.turnPosition = new Rotation2d(getAbsolutePosition());
                 inputs.turnCurrentAmps = getAbsolutePosition();
 
+                // Update odometry inputs
+                inputs.odometryTimestamps = timestampQueue.stream().mapToDouble((Double value) -> value).toArray();
+                inputs.odometryDrivePositionsRad = drivePositionQueue.stream().mapToDouble((Double value) -> value)
+                                .toArray();
+                inputs.odometryTurnPositions = turnPositionQueue.stream()
+                                .map((Double value) -> new Rotation2d(value))
+                                .toArray(Rotation2d[]::new);
+                timestampQueue.clear();
+                drivePositionQueue.clear();
+                turnPositionQueue.clear();
+
+                if (resetToAbsoluteTimer.get() > 2) {
+                        resetToAbsoluteTimer.restart();
+                        resetToAbsolute();
+                }
+                if (!resetToAbsoluteTimer.isRunning()) {
+                        resetToAbsoluteTimer.start();
+                }
+
+        }
+
+        public void resetToAbsolute() {
+                turnMotor.getEncoder().setPosition(getAbsolutePosition());
         }
 
         @Override
@@ -182,11 +223,6 @@ public class ModuleIOReal implements ModuleIO {
                 driveMotor.stopMotor();
                 turnMotor.stopMotor();
         }
-
-        // @Override
-        // public void setPID() {
-        // turnController.setReference(null, null);
-        // }
 
         @Override
         public void setPidValues() {
