@@ -39,7 +39,7 @@ public class ElevatorSparkMax implements ElevatorIO {
     private final SparkMax motor;
     private final RelativeEncoder encoder;
     private final POMDigitalInput limitSwitch;
-    ProfiledPIDController pidController;
+    private final ProfiledPIDController pidController;
     private ElevatorFeedforward feedforward;
 
     public ElevatorSparkMax() {
